@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const date = require(__dirname + "/date.js");
+
 const app = express();
 
 app.set("view engine", 'ejs');
@@ -7,37 +9,48 @@ app.set("view engine", 'ejs');
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(express.static("public"));
 
-var newItems=["Buy Food","Cook Food","Eat Food"];
+const newItems = ["Buy Food", "Cook Food", "Eat Food"];
+
+const  workItems = [];
+
 
 app.get("/", (req, res) => {
+    const day = date.getDate ()
 
-    var today = new Date();
-    var currentDay = today.getDay();
-    //Below reformats the date to a form easily readable by humans
-
-    var options = {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
-    }
-
-    var day = today.toLocaleDateString("en-US", options);
-    console.log(day)
-    //The above is to get the current date.
-    //Below is for rendering using ejs templates
     res.render("list", {
-        kindOfDay: day,
+        listTitle: day,
         newItems: newItems
     });
 });
 
 app.post("/", (req, res) => {
-   var newItem= req.body.newItem;
-    // The code below points to the get route in order to grab the variable "newitem"
-    res.redirect("/")
+
+   const newItem = req.body.newItem;
+
     newItems.push(newItem);
-    console.log(newItem);
+    res.redirect("/");
+
+
+
+    // The code above points to the get route in order to grab the variable "newitem"
+
+
+});
+
+app.get("/work", (req, res) => {
+    res.render("worklist", {
+        listTitle: "Work List",
+        workItems: workItems
+    });
+});
+
+
+app.post("/work", (req, res) => {
+    let newWorkItem = req.body.newWorkItem;
+    workItems.push(newWorkItem);
+    res.redirect("/work");
 });
 
 
