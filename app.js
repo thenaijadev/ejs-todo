@@ -98,35 +98,6 @@ app.post("/", (req, res) => {
 
 });
 
-
-
-app.get("/:CustomListName", (req, res) => {
-    const customListName = _.capitalize(req.params.CustomListName);
-
-    List.findOne({
-        name: customListName
-    }, function (err, foundList) {
-        if (!err) {
-            if (!foundList) {
-                //create new list
-                const list = new List({
-                    name: customListName,
-                    items: defaultItems
-                }); 
-                list.save();
-                res.redirect("/"+ customListName);
-            } else {
-                //show existing list
-                res.render("list", {
-                    listTitle: foundList.name,
-                    newItems: foundList.items
-                })
-            }
-        }
-    })
-
-});
-
 app.post("/delete", function (req, res) {
     const checkedItemId = req.body.checkbox;
     const listName = req.body.listName;
@@ -155,6 +126,34 @@ app.post("/delete", function (req, res) {
 
 
 });
+
+app.get("/:CustomListName", (req, res) => {
+    const customListName = _.capitalize(req.params.CustomListName);
+
+    List.findOne({
+        name: customListName
+    }, function (err, foundList) {
+        if (!err) {
+            if (!foundList) {
+                //create new list
+                const list = new List({
+                    name: customListName,
+                    items: defaultItems
+                }); 
+                list.save();
+                res.redirect("/"+ customListName);
+            } else {
+                //show existing list
+                res.render("list", {
+                    listTitle: foundList.name,
+                    newItems: foundList.items
+                })
+            }
+        }
+    })
+
+});
+
 
 app.post("/work", (req, res) => {
     let newWorkItem = req.body.newWorkItem;
